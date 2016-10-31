@@ -13,8 +13,6 @@ Lines
 Line
 	= Header
     / BlockQuote
-    / ToDoItem
-    / BulletItem
     / ts:Token*
     {
         const tokens = ts.reduce(
@@ -64,7 +62,8 @@ BlockQuoteIndents
     } }
 
 BulletItem
-	= __ b:([-*] { return location() }) ' ' s:[^\n]+
+	= s:(__ { return location() }) b:([-*] { return location() }) ' '
+    & { return s.start.column === 1 }
     { return {
     	type: 'list-bullet',
         location: offsets( location() ),
@@ -72,17 +71,19 @@ BulletItem
     } }
 
 ToDoItem
-	= __ b:('- [' d:(d:[xX]/d:' ' { return d }) ']' { return { isDone: d !== ' ', l: location() } } ) __ t:[^\n]+
+	= s:(__ { return location() }) b:('- [' d:(d:[xX]/d:' ' { return d }) ']' { return { isDone: d !== ' ', l: location() } } ) __
+    & { return s.start.column === 1 }
     { return {
     	type: 'todo-bullet',
-        text: t.join(''),
         isDone: b.isDone,
         location: offsets( location() ),
         bulletLocation: offsets( b.l )
     } }
 
 Token
-	= HtmlLink
+	= ToDoItem
+    / BulletItem
+    / HtmlLink
     / MarkdownLink
     / Url
     / SchemalessUrl

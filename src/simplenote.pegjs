@@ -85,8 +85,7 @@ Token
     / BulletItem
     / HtmlLink
     / MarkdownLink
-    / Url
-    / SchemalessUrl
+    / RFC1738Url
     / Strong
     / Emphasized
     / StrikeThrough
@@ -153,95 +152,65 @@ AtMention
         atLocation: at
 	} }
 
-Url
-	= scheme:UrlScheme '://' u:SchemalessUrl
+RFC1738Url
+	= UrlHttpUrl
+
+UrlHttpUrl
+	= scheme:('http' 's'? '://')
+      hp:UrlHostPort
+      path:('/' p:UrlHostPath search:('?' s:UrlSearch { return '?' + s })? 
+      { return ['/', p, search].join('')})?
     { return {
     	type: 'link',
-        url: scheme + '://' + u.url,
-        urlLocation: offsets( location() ),
-        location: offsets( location() )
-    } }
-
-UrlScheme
-	= s:[a-z]i ss:[a-z0-9+\.\-]i+
-    { return s + ss.join('') }
-
-UrlHost
-	= u:UrlHostPart '.' t:TLD
-    { return u + '.' + t }
-
-    / pp:UrlHostPart ps:(!('.' TLD) '.' p:UrlHostPart { return p })* '.' t:TLD
-    { return [pp].concat( ps ).concat( t ).join('.') }
-
-UrlHostPart
-    = cs:[0-9a-z\-_~]i+
-    { return cs.join('') }
-
-UrlPath
-	= ps:(p:UrlPathPart t:'/'? { return [p, t].join('') })+
-    { return ps.join('') }
-
-UrlPathPart
-	= c:UrlPathChar+ cs:('.' ccs:UrlPathChar+ { return '.' + ccs.join('') })*
-    { return [c.join('')].concat( cs ).join('') }
-
-UrlPathChar
-	= [a-z0-9\-_~]i
-    
-UrlQuery
-	= '?' as:[a-z0-9$&%-_\.+]i*
-    { return '?' + as.join('') }
-    
-UrlFragment
-	= '#' fs:[a-z0-9$&%?\-_\.+]i*
-    { return '#' + fs.join('') }
-    
-UrlAuth
-	= un:(u:[a-z]i us:[a-z0-9;?&=]i+ { return u + us.join('') })
-      pw:(':' p:[a-z]i ps:[a-z0-9;?&=]i+ { return p + ps.join('') })? '@'
-    { return pw ? un + ':' + pw + '@' : un + '@' }
-    
-SchemalessUrl
-    = auth:UrlAuth?
-      h:UrlHost !UrlHostPart !('.' UrlHostPart)
-      port:(':' d:[0-9]+ { return ':' + d.join('') })?
-      slash:'/'? 
-      path:UrlPath? 
-      query:UrlQuery?
-      fragment:UrlFragment?
-    { return {
-    	type: 'link',
-        url: [ auth, h, port, slash, path, query, fragment ].join(''),
-        urlLocation: offsets( location() ),
-        location: offsets( location() )
+        url: [scheme.join(''), hp, path].join(''),
+        location: offsets( location() ),
+        urlLocation: offsets( location() )
     } }
     
-TLD
-	= 'com'i
-    / 'org'i
-    / 'net'i
-    / 'int'i
-    / 'edu'i
-    / 'gov'i
-    / 'mil'i
-    / 'arpa'i
-    / CCTLD
-    / GTLD
+UrlHostPath
+	= head:UrlHostPathSegment tail:('/' h:UrlHostPathSegment { return '/' + h })*
+    { return head + tail.join('') }
     
-CCTLD
-	= 'ac'i
-    / 'io'i
-    / 'uk'i
+UrlHostPathSegment
+	= s:(UrlUChar / [;:@&=])*
+    { return s.join('') }
     
-GTLD
-	= 'biz'i
-    / 'blog'i
-    / 'coffee'i
-    / 'info'i
-    / 'lol'i
-    / 'mobi'i
-    / 'travel'i
-    / 'sucks'i
+UrlSearch
+	= s:(UrlUChar / [;:@&=])*
+    { return s.join('') }
+
+UrlHostPort
+	= h:(UrlHostNumber / UrlHostname) p:(':' ds:Digit+ { return ':' + ds.join('') })?
+    { return [h, p].join('') }
+
+UrlHostname
+	= ls:(l:UrlDomainLabel '.' { return l + '.' })* tl:UrlTopLabel
+    { return ls.concat(tl).join('') }
+    
+UrlHostNumber
+	= a:IPNum '.' b:IPNum '.' c:IPNum '.' d:IPNum
+    { return [a, b, c, d].join('.') }
+    
+IPNum
+	= ds:Digit+
+    & {
+      try {
+         const d = parseInt( ds.join(''), 10 );
+         
+         return d > 0 && d < 256;
+      } catch (e) {
+         return false;
+      }
+    }
+    { return ds.join('') }
+
+UrlDomainLabel
+	= a:AlphaDigit b:(AlphaDigit / '-')* c:AlphaDigit?
+    { return [a].concat(b).concat(c).join('') }
+
+UrlTopLabel
+	= a:Alpha b:(AlphaDigit / '-')* c:AlphaDigit?
+    { return [a].concat(b).concat(c).join('') }
     
 HtmlLink
 	= '<a' __ al:HtmlAttributeList '/'? '>' text:(t:(!'</a>' c:. { return c })+ { return { t: t, l: location() } }) '</a>'
@@ -301,6 +270,23 @@ MarkdownLinkUrl
         urlLocation: offsets( url.l ),
         location: offsets( location() )
     } }
+
+UrlEscaped = '%' h:HexDigit l:HexDigit { return '%' + h + l }
+UrlExtra = [!*'(),]
+UrlNational = [{}|\^~\[\]`]
+UrlPunctuation = [<>#%"]
+UrlReserved = [;/?:@&=]
+UrlSafe = [$\-_\.+]
+UrlUChar = UrlUnreserved / UrlEscaped
+UrlXChar = UrlUnreserved / UrlReserved / UrlEscaped
+UrlUnreserved = Alpha / Digit / UrlSafe / UrlExtra
+
+Alpha = [a-z]i
+UpperAlpha = [A-Z]
+LowerAlpha = [a-z]
+Digit = [0-9]
+HexDigit = [a-f0-9]i
+AlphaDigit = [a-z0-9]i
 
 EOL
 	= [\n]

@@ -206,11 +206,11 @@ UrlPathChar
 	= [a-z0-9\-_~()!$&'*+,;=]i
     
 UrlQuery
-	= '?' as:[a-z0-9$&%-_\.+]i*
+	= '?' as:[a-z0-9$&%-_\.+=?/!()*',;]i+
     { return '?' + as.join('') }
     
 UrlFragment
-	= '#' fs:[a-z0-9$&%?\-_\.+]i*
+	= '#' fs:[a-z0-9$&%\-_\.+=?/!()*,;'#]i*
     { return '#' + fs.join('') }
     
 UrlAuth

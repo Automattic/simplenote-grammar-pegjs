@@ -169,11 +169,11 @@ UrlScheme
 UrlHost
 	= UrlIpHost
     
+    / pp:UrlHostPart ps:('.' p:UrlHostPart { return p })*
+    { return [pp].concat( ps ).join('.') }
+    
     / u:UrlHostPart '.' t:TLD
     { return u + '.' + t }
-
-    / pp:UrlHostPart ps:(!('.' TLD) '.' p:UrlHostPart { return p })* '.' t:TLD
-    { return [pp].concat( ps ).concat( t ).join('.') }
     
 UrlIpHost
 	= a:IPNum '.' b:IPNum '.' c:IPNum '.' d:IPNum

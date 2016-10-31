@@ -1,0 +1,27 @@
+{
+  "name": "simplenote-grammar-pegjs",
+  "version": "0.1.1",
+  "description": "A grammar and peg.js-based parser for Simplenote notes",
+  "main": "dist/note-parser.js",
+  "scripts": {
+    "postinstall": "node ./node_modules/.bin/pegjs -o dist/note-parser.js src/simplenote.pegjs",
+    "test": "node test/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Automattic/simplenote-grammar-pegjs.git"
+  },
+  "keywords": [
+    "Simplenote",
+    "pegjs"
+  ],
+  "author": "Dennis Snell <dennis.snell@automattic.com>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/Automattic/simplenote-grammar-pegjs/issues"
+  },
+  "homepage": "https://github.com/Automattic/simplenote-grammar-pegjs#readme",
+  "dependencies": {
+    "pegjs": "0.10.0"
+  }
+}

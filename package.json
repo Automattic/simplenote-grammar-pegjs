@@ -1,10 +1,10 @@
 {
   "name": "simplenote-grammar-pegjs",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A grammar and peg.js-based parser for Simplenote notes",
   "main": "dist/note-parser.js",
   "scripts": {
-    "postinstall": "node ./node_modules/.bin/pegjs -o dist/note-parser.js src/simplenote.pegjs",
+    "postinstall": "node ./node_modules/.bin/pegjs -o ./dist/note-parser.js ./src/simplenote.pegjs",
     "test": "node test/test.js"
   },
   "repository": {
@@ -22,6 +22,9 @@
   },
   "homepage": "https://github.com/Automattic/simplenote-grammar-pegjs#readme",
   "dependencies": {
+    "pegjs": "0.10.0"
+  },
+  "devDependencies": {
     "pegjs": "0.10.0"
   }
 }

@@ -246,58 +246,55 @@ TLD
     / GTLD
     
 CCTLD
-	= 'ac'i
-    / 'ad'i
-    / 'ae'i
-    / 'af'i
-    / 'ag'i
-    / 'ai'i
-    / 'al'i
-    / 'am'i
-    / 'an'i
-    / 'ao'i
-    / 'aq'i
-    / 'ar'i
-    / 'as'i
-    / 'at'i
-    / 'au'i
-    / 'aw'i
-    / 'ax'i
-    / 'az'i
-    / 'ba'i
-    / 'bb'i
-    / 'bd'i
-    / 'be'i
-    / 'bf'i
-    / 'bg'i
-    / 'bh'i
-    / 'bi'i
-    / 'bj'i
-    / 'bm'i
-    / 'bn'i
-    / 'bo'i
-    / 'bq'i
-    / 'br'i
-    / 'bs'i
-    / 'bt'i
-    / 'bv'i
-    / 'bw'i
-    / 'bz'i
-    / 'de'i
-    / 'io'i
-    / 'uk'i
+	= 'a' c:[cdefgilmnoqrstuwxz] { return 'a' + c }
+    / 'b' c:[abdefghijmnoqrstvwz] { return 'b' + c }
+    / 'c' c:[acdfghiklmnoruvwxyz] { return 'c' + c }
+    / 'd' c:[ejkmoz] { return 'd' + c }
+    / 'e' c:[ceghrstu] { return 'e' + c }
+    / 'f' c:[ijkmor] { return 'f' + c }
+	/ 'g' c:[abdefghilmnpqrstuwy] { return 'g' + c }
+    / 'h' c:[kmnrtu] { return 'h' + c }
+    / 'i' c:[delmnoqrst] { return 'i' + c }
+    / 'j' c:[emop] { return 'j' + c }
+    / 'k' c:[eghimnprwyz] { return 'k' + c }
+    / 'l' c:[abcikrstuvy] { return 'l' + c }
+    / 'm' c:[acdeghklmnopqrstuvwxyz] { return 'm' + c }
+    / 'n' c:[acefgilopruz] { return 'n' + c }
+    / 'om'
+    / 'p' c:[aefghklmnrstwy] { return 'p' + c }
+    / 'qa'
+    / 'r' c:[eosuw] { return 'r' + c }
+    / 's' c:[abcdeghijklmnorstuvxyz] { return 's' + c }
+    / 't' c:[cdfghjklmnoprtvwz] { return 't' + c }
+    / 'u' c:[agksyz] { return 'u' + c }
+    / 'v' c:[aceginu] { return 'v' + c }
+    / 'w' c:[fs] { return 'w' + c }
+    / 'y' c:[et] { return 'y' + c }
+    / 'z' c:[amw] { return 'z' + c }
     
 GTLD
-	= 'bar'i
-    / 'biz'i
-    / 'blog'i
-    / 'coffee'i
-    / 'info'i
-    / 'lol'i
-    / 'mobi'i
-    / 'travel'i
-    / 'sucks'i
-    / 'ws'i
+	= 'academy'
+    / 'accountant'
+    / 'accountants'
+    / 'active'
+    / 'actor'
+    / 'adult'
+    / 'aero'
+    / 'agency'
+    / 'airforce'
+    / 'apartments'
+    / 'app'
+    / 'archi'
+    / 'bar'
+    / 'biz'
+    / 'blog'
+    / 'coffee'
+    / 'info'
+    / 'lol'
+    / 'mobi'
+    / 'travel'
+    / 'sucks'
+    / 'ws'
     
 HtmlLink
 	= '<a' __ al:HtmlAttributeList '/'? '>' text:(t:(!'</a>' c:. { return c })+ { return { t: t, l: location() } }) '</a>'

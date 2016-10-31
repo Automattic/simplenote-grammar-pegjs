@@ -141,7 +141,11 @@ InlineCode
 	} }
 
 AtMention
-	= at:('@' { return offsets( location() ) } ) head:[a-z]i tail:[a-zA-Z0-9_]i*
+    = /* AtMention cannot follow mention-able character */
+      c:[a-z0-9_] '@'
+    { return c + '@' }
+    
+    / at:('@' { return offsets( location() ) } ) head:[a-z]i tail:[a-z0-9_]i*
     { return {
     	type: 'at-mention',
         text: [head].concat(tail).join(''),
@@ -199,14 +203,15 @@ UrlAuth
     
 SchemalessUrl
     = auth:UrlAuth?
-      h:UrlHost !UrlHostPart !('.' UrlHostPart) 
+      h:UrlHost !UrlHostPart !('.' UrlHostPart)
+      port:(':' d:[0-9]+ { return ':' + d.join('') })?
       slash:'/'? 
       path:UrlPath? 
       query:UrlQuery?
       fragment:UrlFragment?
     { return {
     	type: 'link',
-        url: [ auth, h, slash, path, query, fragment ].join(''),
+        url: [ auth, h, port, slash, path, query, fragment ].join(''),
         urlLocation: offsets( location() ),
         location: offsets( location() )
     } }

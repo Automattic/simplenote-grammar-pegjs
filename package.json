@@ -1,6 +1,6 @@
 {
   "name": "simplenote-grammar-pegjs",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "A grammar and peg.js-based parser for Simplenote notes",
   "main": "./note-parser.js",
   "scripts": {

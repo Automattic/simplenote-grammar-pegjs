@@ -247,11 +247,49 @@ TLD
     
 CCTLD
 	= 'ac'i
+    / 'ad'i
+    / 'ae'i
+    / 'af'i
+    / 'ag'i
+    / 'ai'i
+    / 'al'i
+    / 'am'i
+    / 'an'i
+    / 'ao'i
+    / 'aq'i
+    / 'ar'i
+    / 'as'i
+    / 'at'i
+    / 'au'i
+    / 'aw'i
+    / 'ax'i
+    / 'az'i
+    / 'ba'i
+    / 'bb'i
+    / 'bd'i
+    / 'be'i
+    / 'bf'i
+    / 'bg'i
+    / 'bh'i
+    / 'bi'i
+    / 'bj'i
+    / 'bm'i
+    / 'bn'i
+    / 'bo'i
+    / 'bq'i
+    / 'br'i
+    / 'bs'i
+    / 'bt'i
+    / 'bv'i
+    / 'bw'i
+    / 'bz'i
+    / 'de'i
     / 'io'i
     / 'uk'i
     
 GTLD
-	= 'biz'i
+	= 'bar'i
+    / 'biz'i
     / 'blog'i
     / 'coffee'i
     / 'info'i
@@ -259,6 +297,7 @@ GTLD
     / 'mobi'i
     / 'travel'i
     / 'sucks'i
+    / 'ws'i
     
 HtmlLink
 	= '<a' __ al:HtmlAttributeList '/'? '>' text:(t:(!'</a>' c:. { return c })+ { return { t: t, l: location() } }) '</a>'

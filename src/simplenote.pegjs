@@ -141,7 +141,7 @@ InlineCode
 	} }
 
 AtMention
-	= at:('@' { return offsets( location() ) } ) head:[a-zA-Z] tail:[a-zA-Z0-9_]*
+	= at:('@' { return offsets( location() ) } ) head:[a-z]i tail:[a-zA-Z0-9_]i*
     { return {
     	type: 'at-mention',
         text: [head].concat(tail).join(''),
@@ -160,7 +160,7 @@ Url
     } }
 
 UrlScheme
-	= s:[a-z] ss:[a-z0-9+\.\-]+
+	= s:[a-z]i ss:[a-z0-9+\.\-]i+
     { return s + ss.join('') }
 
 UrlHost
@@ -171,7 +171,7 @@ UrlHost
     { return [pp].concat( ps ).concat( t ).join('.') }
 
 UrlHostPart
-    = cs:[0-9a-z\-_~]+
+    = cs:[0-9a-z\-_~]i+
     { return cs.join('') }
 
 UrlPath
@@ -183,7 +183,7 @@ UrlPathPart
     { return [c.join('')].concat( cs ).join('') }
 
 UrlPathChar
-	= [a-z0-9\-_~]
+	= [a-z0-9\-_~]i
     
 SchemalessUrl
     = h:UrlHost !UrlHostPart !('.' UrlHostPart)

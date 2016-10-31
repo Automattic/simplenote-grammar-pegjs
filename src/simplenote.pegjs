@@ -150,11 +150,10 @@ AtMention
 	} }
 
 Url
-	= scheme:UrlScheme '://' host:UrlHost slash:'/'? path:UrlPath?
+	= scheme:UrlScheme '://' u:SchemalessUrl
     { return {
     	type: 'link',
-        text: '',
-        url: scheme + '://' + [ host, slash, path ].join(''),
+        url: scheme + '://' + u.url,
         urlLocation: offsets( location() ),
         location: offsets( location() )
     } }
@@ -185,11 +184,29 @@ UrlPathPart
 UrlPathChar
 	= [a-z0-9\-_~]i
     
+UrlQuery
+	= '?' as:[a-z0-9$&%-_\.+]i*
+    { return '?' + as.join('') }
+    
+UrlFragment
+	= '#' fs:[a-z0-9$&%?\-_\.+]i*
+    { return '#' + fs.join('') }
+    
+UrlAuth
+	= un:(u:[a-z]i us:[a-z0-9;?&=]i+ { return u + us.join('') }) ':' 
+      pw:(p:[a-z]i ps:[a-z0-9;?&=]i+ { return p + ps.join('') }) '@'
+    { return un + ':' + pw + '@' }
+    
 SchemalessUrl
-    = h:UrlHost !UrlHostPart !('.' UrlHostPart)
+    = auth:UrlAuth?
+      h:UrlHost !UrlHostPart !('.' UrlHostPart) 
+      slash:'/'? 
+      path:UrlPath? 
+      query:UrlQuery?
+      fragment:UrlFragment?
     { return {
     	type: 'link',
-        url: h,
+        url: [ auth, h, slash, path, query, fragment ].join(''),
         urlLocation: offsets( location() ),
         location: offsets( location() )
     } }
@@ -288,6 +305,4 @@ __
 
 _
 	= [ \t]
-
-
-
+    

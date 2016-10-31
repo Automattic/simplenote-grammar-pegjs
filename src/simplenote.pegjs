@@ -85,6 +85,7 @@ Token
 	= HtmlLink
     / MarkdownLink
     / Url
+    / SchemalessUrl
     / Strong
     / Emphasized
     / StrikeThrough
@@ -162,9 +163,11 @@ UrlScheme
     { return s + ss.join('') }
 
 UrlHost
-	= UrlHostPart '.' TLD
-    / pp:UrlHostPart ps:('.' p:UrlHostPart { return p })*
-    { return [pp].concat( ps ).join('.') }
+	= u:UrlHostPart '.' t:TLD
+    { return u + '.' + t }
+
+    / pp:UrlHostPart ps:(!('.' TLD) '.' p:UrlHostPart { return p })* '.' t:TLD
+    { return [pp].concat( ps ).concat( t ).join('.') }
 
 UrlHostPart
     = cs:[0-9a-z\-_~]+
@@ -186,35 +189,36 @@ SchemalessUrl
     { return {
     	type: 'link',
         url: h,
+        urlLocation: offsets( location() ),
         location: offsets( location() )
     } }
     
 TLD
-	= '.com'
-    / '.org'
-    / '.net'
-    / '.int'
-    / '.edu'
-    / '.gov'
-    / '.mil'
-    / '.arpa'
+	= 'com'i
+    / 'org'i
+    / 'net'i
+    / 'int'i
+    / 'edu'i
+    / 'gov'i
+    / 'mil'i
+    / 'arpa'i
     / CCTLD
     / GTLD
     
 CCTLD
-	= '.ac'
-    / '.io'
-    / '.uk'
+	= 'ac'i
+    / 'io'i
+    / 'uk'i
     
 GTLD
-	= '.biz'
-    / '.blog'
-    / '.coffee'
-    / '.info'
-    / '.lol'
-    / '.mobi'
-    / '.travel'
-    / '.sucks'
+	= 'biz'i
+    / 'blog'i
+    / 'coffee'i
+    / 'info'i
+    / 'lol'i
+    / 'mobi'i
+    / 'travel'i
+    / 'sucks'i
     
 HtmlLink
 	= '<a' __ al:HtmlAttributeList '/'? '>' text:(t:(!'</a>' c:. { return c })+ { return { t: t, l: location() } }) '</a>'
@@ -283,5 +287,6 @@ __
 
 _
 	= [ \t]
+
 
 

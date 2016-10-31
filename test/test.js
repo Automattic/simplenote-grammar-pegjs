@@ -1,4 +1,4 @@
-const { parse: noteParser } = require( '../dist/note-parser.js' )
+const { parse: noteParser } = require( '../note-parser.js' )
 
 function parseNote( note ) {
     try {

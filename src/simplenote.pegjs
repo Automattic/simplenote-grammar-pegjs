@@ -193,9 +193,9 @@ UrlFragment
     { return '#' + fs.join('') }
     
 UrlAuth
-	= un:(u:[a-z]i us:[a-z0-9;?&=]i+ { return u + us.join('') }) ':' 
-      pw:(p:[a-z]i ps:[a-z0-9;?&=]i+ { return p + ps.join('') }) '@'
-    { return un + ':' + pw + '@' }
+	= un:(u:[a-z]i us:[a-z0-9;?&=]i+ { return u + us.join('') })
+      pw:(':' p:[a-z]i ps:[a-z0-9;?&=]i+ { return p + ps.join('') })? '@'
+    { return pw ? un + ':' + pw + '@' : un + '@' }
     
 SchemalessUrl
     = auth:UrlAuth?
@@ -305,4 +305,3 @@ __
 
 _
 	= [ \t]
-    
